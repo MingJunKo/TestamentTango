@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tango of the Testaments 📖</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:#FDF6EC; --warm-tan:#E8D5B7; --sand:#C9A87C; --brown:#8B5E3C;
+    --dark-brown:#4A2C17; --sky:#A8D8EA; --sky-dark:#6BB8D4; --sage:#B5C99A;
+    --sage-dark:#7D9B5E; --blush:#F4A7B9; --gold:#F4C430; --gold-dark:#D4A017;
+    --correct:#6BCB77; --wrong:#FF6B6B;
+    --shadow:0 8px 32px rgba(74,44,23,0.13); --shadow-sm:0 4px 12px rgba(74,44,23,0.10);
+    --radius:24px; --radius-sm:14px;
+    /* card & text */
+    --card-bg:rgba(255,255,255,.88); --card-border:transparent;
+    --text-main:#4A2C17; --text-sub:#8B5E3C; --text-muted:#C9A87C;
+    --input-bg:#FDF6EC; --input-border:#E8D5B7;
+    --pill-bg:rgba(255,255,255,.88);
+    --divider:#E8D5B7;
+  }
+  body.dark {
+    --cream:#1A1025; --warm-tan:#2D2040; --sand:#5A4070; --brown:#B39DCC;
+    --dark-brown:#E8DEFF; --sky:#3B6B8A; --sky-dark:#5A9CBD; --sage:#3A5C3A;
+    --sage-dark:#7DBF7D; --gold:#C9960A; --gold-dark:#E8B020;
+    --correct:#4CAF6A; --wrong:#E05555;
+    --shadow:0 8px 32px rgba(0,0,0,0.45); --shadow-sm:0 4px 12px rgba(0,0,0,0.35);
+    --card-bg:rgba(30,18,48,.92); --card-border:rgba(90,64,112,.5);
+    --text-main:#E8DEFF; --text-sub:#B39DCC; --text-muted:#7A6090;
+    --input-bg:#231535; --input-border:#3D2860;
+    --pill-bg:rgba(30,18,48,.92);
+    --divider:#3D2860;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;
+    background:radial-gradient(ellipse at 10% 20%,rgba(168,216,234,.35) 0%,transparent 55%),
+               radial-gradient(ellipse at 85% 75%,rgba(181,201,154,.30) 0%,transparent 55%),
+               radial-gradient(ellipse at 50% 50%,rgba(244,196,48,.10) 0%,transparent 70%);
+    pointer-events:none;transition:opacity .4s;}
+  body.dark::before{
+    background:radial-gradient(ellipse at 10% 20%,rgba(58,40,100,.6) 0%,transparent 55%),
+               radial-gradient(ellipse at 85% 75%,rgba(30,60,80,.5) 0%,transparent 55%),
+               radial-gradient(ellipse at 50% 50%,rgba(100,60,0,.2) 0%,transparent 70%);}
+  .fd{position:fixed;z-index:0;pointer-events:none;font-size:2rem;opacity:.12;animation:floatD 8s ease-in-out infinite;}
+  @keyframes floatD{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-18px) rotate(8deg);}}
+  .screen{display:none;position:relative;z-index:1;min-height:100vh;padding:24px 16px;}
+  .screen.active{display:flex;flex-direction:column;align-items:center;}
+  .card{background:var(--card-bg);backdrop-filter:blur(12px);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px 26px;width:100%;max-width:520px;border:1px solid var(--card-border);transition:background .4s,border .4s;}
+  .logo-icon{font-size:3.5rem;display:block;text-align:center;animation:bounce 2s infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+  .logo-title{font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--dark-brown);letter-spacing:1px;line-height:1;text-align:center;transition:color .4s;}
+  .logo-sub{font-size:.95rem;color:var(--brown);margin-top:4px;font-weight:600;text-align:center;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;border:none;cursor:pointer;border-radius:50px;padding:13px 26px;transition:all .18s;outline:none;box-shadow:0 4px 0 rgba(0,0,0,.15);}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15);}
+  .btn-primary{background:var(--gold);color:var(--dark-brown);}
+  .btn-primary:hover{background:var(--gold-dark);transform:translateY(-2px);}
+  .btn-sky{background:var(--sky);color:var(--dark-brown);}
+  .btn-sky:hover{background:var(--sky-dark);transform:translateY(-2px);}
+  .btn-sage{background:var(--sage);color:var(--dark-brown);}
+  .btn-sage:hover{background:var(--sage-dark);color:#fff;transform:translateY(-2px);}
+  .btn-outline{background:transparent;color:var(--brown);border:2.5px solid var(--sand);box-shadow:none;}
+  .btn-outline:hover{background:var(--warm-tan);}
+  .btn-block{width:100%;}
+  .btn-lg{font-size:1.15rem;padding:16px 32px;}
+  .btn:disabled{opacity:.4;pointer-events:none;}
+  .input-field{width:100%;padding:13px 18px;border:2.5px solid var(--input-border);border-radius:50px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:700;color:var(--dark-brown);background:var(--input-bg);outline:none;transition:border-color .2s,background .4s,color .4s;}
+  .input-field:focus{border-color:var(--sky-dark);}
+  .input-field.wi{border-color:var(--wrong);background:#fff5f5;animation:shake .4s;}
+  body.dark .input-field.wi{background:#3a1515;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+  .diff-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin:16px 0;}
+  .diff-card{background:var(--input-bg);border:2.5px solid var(--input-border);border-radius:var(--radius-sm);padding:15px 8px;text-align:center;cursor:pointer;transition:all .18s;}
+  .diff-card:hover,.diff-card.selected{border-color:var(--gold);background:rgba(244,196,48,.12);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+  body.dark .diff-card:hover,body.dark .diff-card.selected{background:rgba(201,150,10,.15);}
+  .diff-card .de{font-size:1.9rem;display:block;margin-bottom:5px;}
+  .diff-card .dn{font-weight:800;font-size:.88rem;color:var(--dark-brown);}
+  .diff-card .dd{font-size:.7rem;color:var(--brown);margin-top:2px;}
+  .ghdr{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:6px;flex-wrap:wrap;}
+  .spill{background:var(--pill-bg);border-radius:50px;padding:7px 13px;font-weight:800;font-size:.83rem;color:var(--dark-brown);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:4px;transition:background .4s,color .4s;}
+  .spill.td{background:#FFE0E0;color:var(--wrong);animation:pulse .7s infinite;}
+  body.dark .spill.td{background:#3a1515;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+  .blanks-wrap{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:14px 0;}
+  .bl{width:33px;height:40px;background:var(--warm-tan);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.25rem;color:var(--dark-brown);transition:all .25s;box-shadow:0 3px 0 var(--sand);}
+  .bl.filled{background:var(--sky);box-shadow:0 3px 0 var(--sky-dark);}
+  .bl.cf{background:var(--correct);box-shadow:0 3px 0 #4caf50;color:#fff;}
+  .bl.hi{background:rgba(244,196,48,.55);box-shadow:0 3px 0 var(--gold-dark);}
+  body.dark .bl.hi{background:rgba(201,150,10,.4);}
+  .bl.sp{background:transparent;box-shadow:none;width:12px;}
+  .t-badge{display:inline-block;padding:4px 13px;border-radius:50px;font-size:.73rem;font-weight:800;letter-spacing:.5px;margin-bottom:8px;}
+  .t-badge.ot{background:rgba(244,196,48,.25);color:var(--brown);}
+  body.dark .t-badge.ot{background:rgba(201,150,10,.2);}
+  .t-badge.nt{background:rgba(107,184,212,.3);color:#2a6a8a;}
+  body.dark .t-badge.nt{background:rgba(58,107,138,.35);color:#5A9CBD;}
+  .cat-badge{display:inline-block;padding:3px 9px;border-radius:50px;font-size:.7rem;font-weight:700;background:rgba(181,201,154,.4);color:var(--sage-dark);margin-left:5px;}
+  body.dark .cat-badge{background:rgba(58,92,58,.5);}
+  .prog-wrap{width:100%;background:var(--warm-tan);border-radius:50px;height:8px;margin:7px 0;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--gold),var(--sage));transition:width .5s ease;}
+  .tbar-wrap{width:100%;max-width:520px;background:var(--warm-tan);border-radius:50px;height:7px;margin-bottom:9px;overflow:hidden;}
+  .tbar-fill{height:100%;border-radius:50px;background:var(--sky);transition:width 1s linear,background .5s;}
+  .tbar-fill.danger{background:var(--wrong);}
+  .mcq-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;}
+  .mcq-opt{background:var(--input-bg);border:2.5px solid var(--input-border);border-radius:var(--radius-sm);padding:13px 8px;text-align:center;cursor:pointer;font-weight:800;font-size:.9rem;color:var(--dark-brown);transition:all .18s;font-family:'Nunito',sans-serif;}
+  .mcq-opt:hover:not(:disabled){border-color:var(--sky-dark);background:rgba(168,216,234,.2);transform:translateY(-2px);}
+  body.dark .mcq-opt:hover:not(:disabled){background:rgba(58,107,138,.25);}
+  .mcq-opt.co{background:rgba(107,203,119,.25);border-color:var(--correct);color:#2d7a36;}
+  body.dark .mcq-opt.co{background:rgba(76,175,106,.15);color:#7DBF7D;}
+  .mcq-opt.wo{background:rgba(255,107,107,.2);border-color:var(--wrong);color:#c0392b;}
+  body.dark .mcq-opt.wo{background:rgba(224,85,85,.15);color:#e07070;}
+  .mcq-opt:disabled{pointer-events:none;}
+  .flash-overlay{position:fixed;inset:0;z-index:100;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+  .flash-overlay.show{opacity:1;}
+  .flash-bg{position:absolute;inset:0;background:rgba(107,203,119,.17);}
+  body.dark .flash-bg{background:rgba(76,175,106,.12);}
+  .flash-card{position:relative;background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:26px 32px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:popIn .35s cubic-bezier(.34,1.56,.64,1);max-width:340px;width:92vw;}
+  @keyframes popIn{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .fe{font-size:2.6rem;display:block;}
+  .ft{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--correct);margin-top:4px;}
+  .fs{font-size:.86rem;color:var(--brown);font-weight:700;margin-top:3px;}
+  .ff{font-size:.9rem;color:var(--dark-brown);max-width:290px;margin:11px auto 0;line-height:1.6;background:rgba(168,216,234,.2);border-radius:12px;padding:10px 14px;border-left:3px solid var(--sky-dark);}
+  .ftap{font-size:.68rem;color:var(--sand);margin-top:10px;font-weight:700;}
+  .confetti-piece{position:fixed;pointer-events:none;z-index:200;border-radius:2px;animation:cfFall linear forwards;}
+  @keyframes cfFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+  .streak-disp{text-align:center;margin:5px 0;}
+  .streak-flames{font-size:1.25rem;letter-spacing:2px;}
+  .streak-lbl{font-size:.73rem;color:var(--brown);font-weight:700;}
+  .lb-tabs{display:flex;gap:7px;margin-bottom:13px;}
+  .lb-tab{flex:1;padding:9px;border-radius:50px;font-weight:800;font-size:.82rem;cursor:pointer;border:2.5px solid var(--warm-tan);background:var(--cream);color:var(--brown);text-align:center;transition:all .18s;}
+  .lb-tab.active{background:var(--gold);border-color:var(--gold-dark);color:var(--dark-brown);}
+  .lb-row{display:flex;align-items:center;gap:9px;padding:10px 13px;border-radius:var(--radius-sm);margin-bottom:6px;background:var(--input-bg);}
+  .lb-row:nth-child(1){background:rgba(244,196,48,.18);}
+  .lb-row:nth-child(2){background:rgba(192,192,192,.18);}
+  .lb-row:nth-child(3){background:rgba(205,127,50,.18);}
+  body.dark .lb-row:nth-child(1){background:rgba(201,150,10,.18);}
+  body.dark .lb-row:nth-child(2){background:rgba(120,120,120,.15);}
+  body.dark .lb-row:nth-child(3){background:rgba(140,90,40,.18);}
+  .lb-rank{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--brown);min-width:24px;}
+  .lb-name{font-weight:800;color:var(--dark-brown);flex:1;font-size:.88rem;}
+  .lb-score{font-weight:800;color:var(--brown);font-size:.86rem;}
+  .lb-time{font-size:.72rem;color:var(--sand);font-weight:700;}
+  .fact-box{background:rgba(168,216,234,.2);border-left:4px solid var(--sky-dark);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 13px;margin-top:11px;font-size:.8rem;color:var(--brown);font-style:italic;line-height:1.4;}
+  .fact-box strong{color:var(--dark-brown);font-style:normal;}
+  body.dark .fact-box{background:rgba(58,107,138,.18);}
+  .pronun-box{background:rgba(181,201,154,.2);border-left:4px solid var(--sage-dark);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:8px 13px;margin-top:8px;font-size:.79rem;color:var(--sage-dark);font-weight:700;}
+  body.dark .pronun-box{background:rgba(58,92,58,.2);}
+  .badges-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+  .badge-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--input-bg);border-radius:var(--radius-sm);padding:10px 8px;min-width:68px;border:2px solid var(--input-border);transition:all .3s;}
+  .badge-item.earned{border-color:var(--gold);background:rgba(244,196,48,.12);}
+  body.dark .badge-item.earned{background:rgba(201,150,10,.15);}
+  .badge-emoji{font-size:1.7rem;filter:grayscale(1) opacity(.3);}
+  .badge-item.earned .badge-emoji{filter:none;}
+  .badge-label{font-size:.66rem;font-weight:800;color:var(--brown);text-align:center;}
+  .badge-cond{font-size:.58rem;color:var(--text-muted);text-align:center;}
+  .pb-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0;}
+  .pb-cell{background:var(--input-bg);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;}
+  .pb-cell .pbv{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--dark-brown);}
+  .pb-cell .pbl{font-size:.63rem;color:var(--brown);font-weight:700;}
+  .win-verse{background:linear-gradient(135deg,rgba(244,196,48,.15),rgba(168,216,234,.15));border-radius:var(--radius-sm);padding:18px;margin:13px 0;text-align:center;font-style:italic;color:var(--dark-brown);font-size:.97rem;line-height:1.6;border:2px solid rgba(244,196,48,.3);}
+  body.dark .win-verse{background:linear-gradient(135deg,rgba(201,150,10,.12),rgba(58,107,138,.15));border-color:rgba(201,150,10,.25);}
+  .win-verse cite{display:block;font-style:normal;font-weight:800;color:var(--brown);margin-top:7px;font-size:.83rem;}
+  .win-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:13px 0;}
+  .win-stat{background:var(--input-bg);border-radius:var(--radius-sm);padding:13px 6px;text-align:center;}
+  .win-stat .wsv{font-family:'Fredoka One',cursive;font-size:1.75rem;color:var(--dark-brown);}
+  .win-stat .wsl{font-size:.7rem;color:var(--brown);font-weight:700;}
+  .ms-popup{margin-top:10px;width:100%;max-width:520px;background:linear-gradient(135deg,rgba(244,196,48,.25),rgba(168,216,234,.25));border-radius:var(--radius);padding:15px 18px;text-align:center;box-shadow:var(--shadow-sm);animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+  body.dark .ms-popup{background:linear-gradient(135deg,rgba(201,150,10,.2),rgba(58,107,138,.2));}
+  .review-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;padding-right:4px;}
+  .review-item{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:var(--radius-sm);background:rgba(255,107,107,.1);border-left:3px solid var(--wrong);}
+  body.dark .review-item{background:rgba(224,85,85,.12);}
+  .sec-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--dark-brown);margin-bottom:11px;}
+  .divider{width:100%;height:2px;background:var(--divider);border-radius:2px;margin:13px 0;}
+  .tc{text-align:center;} .mt12{margin-top:12px;} .mt16{margin-top:16px;}
+  .small{font-size:.81rem;color:var(--brown);}
+  .nav-bar{width:100%;max-width:520px;display:flex;gap:8px;margin-bottom:11px;align-items:center;}
+  .scroll-list,.review-list{max-height:330px;overflow-y:auto;padding-right:4px;}
+  .scroll-list::-webkit-scrollbar,.review-list::-webkit-scrollbar{width:5px;}
+  .scroll-list::-webkit-scrollbar-track,.review-list::-webkit-scrollbar-track{background:var(--warm-tan);border-radius:3px;}
+  .scroll-list::-webkit-scrollbar-thumb,.review-list::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
+  .ua{width:27px;height:27px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:900;color:#1A1025;}
+  @keyframes slideUp{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .su{animation:slideUp .38s ease both;}
+  .tabs{display:flex;gap:6px;margin-bottom:11px;}
+  .tab{flex:1;padding:8px;border-radius:50px;font-weight:800;font-size:.78rem;cursor:pointer;border:2px solid var(--input-border);background:var(--input-bg);color:var(--brown);text-align:center;transition:all .18s;}
+  .tab.active{background:var(--sky);border-color:var(--sky-dark);color:var(--dark-brown);}
+  body.dark .tab.active{color:#fff;}
+  .tab-content{display:none;} .tab-content.active{display:block;}
+  /* ── DARK MODE TOGGLE ── */
+  .dm-toggle{position:fixed;top:14px;right:16px;z-index:500;background:var(--card-bg);border:2px solid var(--input-border);border-radius:50px;padding:6px 12px;font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .3s;line-height:1;}
+  .dm-toggle:hover{transform:scale(1.1);}
+  @media(max-width:480px){
+    .diff-grid{grid-template-columns:1fr;}
+    .mcq-grid{grid-template-columns:1fr;}
+    .win-stats,.pb-grid{grid-template-columns:1fr 1fr;}
+    .logo-title{font-size:2.2rem;}
+    .bl{width:27px;height:35px;font-size:1rem;}
+    .card{padding:20px 14px;}
+  }
+</style>
+</head>
+<body>
+
+<button class="dm-toggle" id="dmToggle" onclick="toggleDark()" title="Toggle dark mode">☀️</button>
+
+<div class="fd" style="top:5%;left:3%;animation-delay:0s">📖</div>
+<div class="fd" style="top:15%;right:5%;animation-delay:1.5s">✨</div>
+<div class="fd" style="bottom:20%;left:7%;animation-delay:3s">🕊️</div>
+<div class="fd" style="bottom:10%;right:3%;animation-delay:2s">⭐</div>
+<div class="fd" style="top:45%;left:1%;animation-delay:4s">🌿</div>
+
+<!-- FLASH -->
+<div class="flash-overlay" id="flashOverlay">
+  <div class="flash-bg"></div>
+  <div class="flash-card">
+    <span class="fe" id="fEmoji">🎉</span>
+    <div class="ft" id="fText">Correct!</div>
+    <div class="fs" id="fSub"></div>
+    <div class="ff" id="fFact"></div>
+  </div>
+</div>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div class="screen active" id="screen-home">
+  <div style="height:34px"></div>
+  <span class="logo-icon">📖</span>
+  <div class="logo-title mt12">Tango of the Testaments</div>
+  <div class="logo-sub">Learn all 66 books of the Bible!</div>
+  <div style="height:20px"></div>
+  <div class="card su">
+    <div class="sec-title tc" style="font-size:1.15rem;margin-bottom:8px">Your Name 😊</div>
+    <input class="input-field" id="usernameInput" type="text" placeholder="Enter your name..." maxlength="20" autocomplete="off">
+    <div class="divider"></div>
+    <div class="sec-title tc" style="font-size:1.15rem;margin-bottom:8px">Difficulty</div>
+    <div class="diff-grid">
+      <div class="diff-card" data-diff="easy" onclick="selDiff(this)">
+        <span class="de">🌱</span><div class="dn">Easy</div><div class="dd">4 choices + hints</div>
+      </div>
+      <div class="diff-card selected" data-diff="intermediate" onclick="selDiff(this)">
+        <span class="de">📝</span><div class="dn">Medium</div><div class="dd">Type the answer</div>
+      </div>
+      <div class="diff-card" data-diff="hard" onclick="selDiff(this)">
+        <span class="de">⚡</span><div class="dn">Hard</div><div class="dd">10s per question!</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block btn-lg mt12" onclick="startGame()">✨ Play Now!</button>
+    <div class="divider"></div>
+    <div style="display:flex;gap:9px">
+      <button class="btn btn-sky btn-block" onclick="goLB()">🏆 Leaderboard</button>
+      <button class="btn btn-sage btn-block" onclick="showScreen('screen-profile')">👤 My Profile</button>
+    </div>
+    <div class="mt12">
+      <button class="btn btn-outline btn-block" onclick="showScreen('screen-howto')">❓ How to Play</button>
+    </div>
+  </div>
+  <div style="height:14px"></div>
+  <div class="small tc" style="opacity:.6">66 books · Old &amp; New Testament · 3 difficulty levels</div>
+</div>
+
+<!-- ═══════════ HOW TO PLAY ═══════════ -->
+<div class="screen" id="screen-howto">
+  <div style="height:18px"></div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1;text-align:center;font-family:'Fredoka One',cursive;font-size:1.25rem;color:var(--dark-brown)">How to Play</div>
+    <div style="width:74px"></div>
+  </div>
+  <div class="card su">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">🌱</span><div><strong style="color:var(--dark-brown)">Easy</strong><div class="small">Pick from 4 choices. Use 💡 Hint to reveal a letter (reduces bonus).</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">📝</span><div><strong style="color:var(--dark-brown)">Medium</strong><div class="small">Blanks show letter count. Type the book name and press Enter.</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">⚡</span><div><strong style="color:var(--dark-brown)">Hard</strong><div class="small">Same as Medium — but only 10 seconds per question!</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">❌</span><div><strong style="color:var(--dark-brown)">Wrong Answer</strong><div class="small">Game resets to Genesis. The missed book is recorded for review!</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">🏆</span><div><strong style="color:var(--dark-brown)">Scoring</strong><div class="small">10 pts/book + speed bonus (Hard) + streak bonus × difficulty multiplier.</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">🎖️</span><div><strong style="color:var(--dark-brown)">Milestone Badges</strong><div class="small">Earn badges at 5, 10, 20, 39 (end of OT!), 50, 60, and all 66 books.</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">🔊</span><div><strong style="color:var(--dark-brown)">Pronunciation</strong><div class="small">After each answer, see how to pronounce tricky names like "Habakkuk"!</div></div></div>
+      <div style="display:flex;gap:11px;align-items:flex-start"><span style="font-size:1.35rem">📚</span><div><strong style="color:var(--dark-brown)">Review Mode</strong><div class="small">Your profile tracks every book you missed so you can focus on them.</div></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="fact-box"><strong>💡 Tip:</strong> Books go in order — Genesis to Revelation. Wrong answer resets you, but you learn each time!</div>
+    <button class="btn btn-primary btn-block mt16" onclick="showScreen('screen-home')">Let's Play! 🚀</button>
+  </div>
+</div>
+
+<!-- ═══════════ GAME ═══════════ -->
+<div class="screen" id="screen-game">
+  <div style="height:10px"></div>
+  <div class="ghdr" id="ghdr">
+    <div class="spill" style="display:flex;align-items:center;gap:5px">
+      <div class="ua" id="hAvatar">?</div>
+      <span id="hName" style="font-weight:800;font-size:.83rem;color:var(--dark-brown)">Player</span>
+    </div>
+    <div class="spill" id="scoreDisp">⭐ 0</div>
+    <div class="spill" id="timerDisp">⏱ 0:00</div>
+    <div class="spill" id="progDisp">📖 1/66</div>
+  </div>
+  <div class="tbar-wrap" id="tbarWrap" style="display:none">
+    <div class="tbar-fill" id="tbarFill" style="width:100%"></div>
+  </div>
+  <div class="card su" id="gameCard">
+    <div class="tc">
+      <span class="t-badge ot" id="tBadge">📜 Old Testament</span>
+      <span class="cat-badge" id="catBadge">Law</span>
+    </div>
+    <div style="text-align:center;color:var(--brown);font-weight:700;font-size:.83rem;margin-bottom:4px" id="bookNum">Book 1 of 66</div>
+    <div class="streak-disp" id="streakDisp" style="display:none">
+      <div class="streak-flames" id="streakFlames">🔥</div>
+      <div class="streak-lbl" id="streakLbl">3 streak!</div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+    <!-- TYPING -->
+    <div id="typingSec">
+      <div class="blanks-wrap" id="blanksWrap"></div>
+      <input class="input-field" id="ansInp" type="text" placeholder="Type the book name..." autocomplete="off" autocorrect="off" spellcheck="false" style="margin-top:5px">
+      <div style="display:flex;gap:8px;margin-top:9px">
+        <button class="btn btn-sage btn-block" onclick="checkAnswer()">Check ✓</button>
+        <button class="btn btn-outline" onclick="doQuit()" style="white-space:nowrap">🚪 Quit</button>
+      </div>
+    </div>
+
+    <!-- MCQ -->
+    <div id="mcqSec" style="display:none">
+      <div class="blanks-wrap" id="mcqBlanksWrap"></div>
+      <div class="mcq-grid" id="mcqGrid"></div>
+      <div style="display:flex;gap:8px;margin-top:9px;align-items:center">
+        <button class="btn btn-outline" style="font-size:.8rem;padding:9px 14px" id="hintBtn" onclick="useHint()">💡 Hint</button>
+        <span id="hintsLeft" style="font-size:.73rem;color:var(--sand);font-weight:700;flex:1">3 hints left</span>
+        <button class="btn btn-outline" style="font-size:.8rem;padding:9px 14px" onclick="doQuit()">🚪 Quit</button>
+      </div>
+    </div>
+
+    <div id="pronunBox" class="pronun-box" style="display:none"></div>
+    <div id="factBox" class="fact-box" style="display:none"></div>
+  </div>
+  <div id="msPopup" style="display:none;margin-top:10px;width:100%;max-width:520px">
+    <div class="ms-popup">
+      <div id="msEmoji" style="font-size:2.4rem"></div>
+      <div id="msText" style="font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--dark-brown);margin-top:3px"></div>
+      <div id="msSub" style="font-size:.78rem;color:var(--brown);margin-top:2px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ WIN ═══════════ -->
+<div class="screen" id="screen-win">
+  <div style="height:18px"></div>
+  <div class="card su tc">
+    <div style="font-size:3.4rem">🎊</div>
+    <div class="sec-title mt12" style="font-size:1.95rem">You did it!</div>
+    <div class="small">You've named all 66 books of the Bible! 🙌</div>
+    <div class="small" style="margin-top:4px;font-style:italic;color:var(--sand)">Tango of the Testaments — complete!</div>
+    <div class="win-stats" id="winStats"></div>
+    <div id="pbBanner" style="display:none;background:rgba(244,196,48,.22);border-radius:var(--radius-sm);padding:9px;margin-bottom:9px;font-weight:800;color:var(--dark-brown);font-size:.88rem">🏅 New Personal Best!</div>
+    <div class="win-verse" id="winVerse"></div>
+    <div class="divider"></div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <button class="btn btn-primary btn-block btn-lg" onclick="startGame()">🔄 Play Again!</button>
+      <button class="btn btn-sky btn-block" onclick="goLB()">🏆 Leaderboard</button>
+      <button class="btn btn-sage btn-block" onclick="showScreen('screen-profile')">👤 My Profile</button>
+      <button class="btn btn-outline btn-block" onclick="showScreen('screen-home')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ GAME OVER ═══════════ -->
+<div class="screen" id="screen-gameover">
+  <div style="height:32px"></div>
+  <div class="card su tc">
+    <div style="font-size:2.9rem" id="goEmoji">😬</div>
+    <div class="sec-title mt12" id="goTitle">Oops!</div>
+    <div class="small" id="goMsg">That wasn't quite right.</div>
+    <div style="margin:13px 0;padding:13px;background:var(--warm-tan);border-radius:var(--radius-sm)">
+      <div class="small">The answer was</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:1.65rem;color:var(--dark-brown)" id="goCorrect"></div>
+      <div class="small" id="goReached"></div>
+    </div>
+    <div id="goPronun" class="pronun-box" style="display:none;text-align:left"></div>
+    <div class="fact-box" id="goFact"></div>
+    <div class="divider"></div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-top:3px">
+      <button class="btn btn-primary btn-block btn-lg" onclick="startGame()">🔄 Try Again!</button>
+      <button class="btn btn-sky btn-block" onclick="goLB()">🏆 Leaderboard</button>
+      <button class="btn btn-outline btn-block" onclick="showScreen('screen-home')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LEADERBOARD ═══════════ -->
+<div class="screen" id="screen-leaderboard">
+  <div style="height:18px"></div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1;text-align:center;font-family:'Fredoka One',cursive;font-size:1.25rem;color:var(--dark-brown)">🏆 Leaderboard</div>
+    <div style="width:70px"></div>
+  </div>
+  <div class="card su" style="max-width:520px;width:100%">
+    <div class="lb-tabs">
+      <div class="lb-tab active" id="lbE" onclick="showLbTab('easy',this)">🌱 Easy</div>
+      <div class="lb-tab" id="lbI" onclick="showLbTab('intermediate',this)">📝 Medium</div>
+      <div class="lb-tab" id="lbH" onclick="showLbTab('hard',this)">⚡ Hard</div>
+    </div>
+    <div class="scroll-list" id="lbList"></div>
+  </div>
+</div>
+
+<!-- ═══════════ PROFILE ═══════════ -->
+<div class="screen" id="screen-profile">
+  <div style="height:18px"></div>
+  <div class="nav-bar">
+    <button class="btn btn-outline" onclick="showScreen('screen-home')">← Back</button>
+    <div style="flex:1;text-align:center;font-family:'Fredoka One',cursive;font-size:1.25rem;color:var(--dark-brown)">👤 My Profile</div>
+    <div style="width:70px"></div>
+  </div>
+  <div class="card su" style="max-width:520px;width:100%">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('tab-pb',this)">🏅 Bests</div>
+      <div class="tab" onclick="switchTab('tab-badges',this)">🎖️ Badges</div>
+      <div class="tab" onclick="switchTab('tab-review',this)">📚 Review</div>
+    </div>
+    <div class="tab-content active" id="tab-pb">
+      <div class="sec-title" style="font-size:1.05rem">Best Scores</div>
+      <div class="pb-grid" id="pbScores"></div>
+      <div class="divider"></div>
+      <div class="sec-title" style="font-size:1.05rem">Fastest Times</div>
+      <div class="pb-grid" id="pbTimes"></div>
+    </div>
+    <div class="tab-content" id="tab-badges">
+      <div class="sec-title" style="font-size:1.05rem">Milestone Badges</div>
+      <div class="small" style="margin-bottom:9px">Complete runs to unlock — greyed out = locked</div>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </div>
+    <div class="tab-content" id="tab-review">
+      <div class="sec-title" style="font-size:1.05rem">Books to Review 📚</div>
+      <div class="small" style="margin-bottom:9px">Books you've got wrong — sorted by most missed</div>
+      <div class="review-list" id="reviewList"></div>
+      <div style="margin-top:11px">
+        <button class="btn btn-outline btn-block" style="font-size:.78rem;padding:9px" onclick="clearReview()">🗑️ Clear Review List</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════
+// DATA
+// ════════════════════════════════════
+const BOOKS=[
+  {name:"Genesis",      t:"OT",cat:"Law",           p:"JEH-nuh-sis"},
+  {name:"Exodus",       t:"OT",cat:"Law",           p:"EK-suh-dus"},
+  {name:"Leviticus",    t:"OT",cat:"Law",           p:"leh-VIT-ih-kus"},
+  {name:"Numbers",      t:"OT",cat:"Law",           p:"NUM-berz"},
+  {name:"Deuteronomy",  t:"OT",cat:"Law",           p:"doo-TER-uh-noh-mee"},
+  {name:"Joshua",       t:"OT",cat:"History",       p:"JOSH-yoo-uh"},
+  {name:"Judges",       t:"OT",cat:"History",       p:"JUJ-iz"},
+  {name:"Ruth",         t:"OT",cat:"History",       p:"ROOTH"},
+  {name:"1 Samuel",     t:"OT",cat:"History",       p:"SAM-yoo-el"},
+  {name:"2 Samuel",     t:"OT",cat:"History",       p:"SAM-yoo-el"},
+  {name:"1 Kings",      t:"OT",cat:"History",       p:"KINGZ"},
+  {name:"2 Kings",      t:"OT",cat:"History",       p:"KINGZ"},
+  {name:"1 Chronicles", t:"OT",cat:"History",       p:"KRON-ih-kulz"},
+  {name:"2 Chronicles", t:"OT",cat:"History",       p:"KRON-ih-kulz"},
+  {name:"Ezra",         t:"OT",cat:"History",       p:"EZ-ruh"},
+  {name:"Nehemiah",     t:"OT",cat:"History",       p:"nee-huh-MY-uh"},
+  {name:"Esther",       t:"OT",cat:"History",       p:"ES-ter"},
+  {name:"Job",          t:"OT",cat:"Poetry",        p:"JOHB"},
+  {name:"Psalms",       t:"OT",cat:"Poetry",        p:"SAHMZ"},
+  {name:"Proverbs",     t:"OT",cat:"Poetry",        p:"PROV-erbz"},
+  {name:"Ecclesiastes", t:"OT",cat:"Poetry",        p:"eh-klee-zee-AS-teez"},
+  {name:"Song of Solomon",t:"OT",cat:"Poetry",      p:"SONG ov SOL-uh-mun"},
+  {name:"Isaiah",       t:"OT",cat:"Major Prophets",p:"eye-ZAY-uh"},
+  {name:"Jeremiah",     t:"OT",cat:"Major Prophets",p:"jair-uh-MY-uh"},
+  {name:"Lamentations", t:"OT",cat:"Major Prophets",p:"lam-en-TAY-shunz"},
+  {name:"Ezekiel",      t:"OT",cat:"Major Prophets",p:"ih-ZEE-kee-el"},
+  {name:"Daniel",       t:"OT",cat:"Major Prophets",p:"DAN-yel"},
+  {name:"Hosea",        t:"OT",cat:"Minor Prophets",p:"hoh-ZAY-uh"},
+  {name:"Joel",         t:"OT",cat:"Minor Prophets",p:"JOH-el"},
+  {name:"Amos",         t:"OT",cat:"Minor Prophets",p:"AY-mus"},
+  {name:"Obadiah",      t:"OT",cat:"Minor Prophets",p:"oh-buh-DY-uh"},
+  {name:"Jonah",        t:"OT",cat:"Minor Prophets",p:"JOH-nuh"},
+  {name:"Micah",        t:"OT",cat:"Minor Prophets",p:"MY-kuh"},
+  {name:"Nahum",        t:"OT",cat:"Minor Prophets",p:"NAY-hum"},
+  {name:"Habakkuk",     t:"OT",cat:"Minor Prophets",p:"huh-BAK-uk"},
+  {name:"Zephaniah",    t:"OT",cat:"Minor Prophets",p:"zef-uh-NY-uh"},
+  {name:"Haggai",       t:"OT",cat:"Minor Prophets",p:"HAG-eye"},
+  {name:"Zechariah",    t:"OT",cat:"Minor Prophets",p:"zek-uh-RY-uh"},
+  {name:"Malachi",      t:"OT",cat:"Minor Prophets",p:"MAL-uh-ky"},
+  {name:"Matthew",      t:"NT",cat:"Gospels",       p:"MATH-yoo"},
+  {name:"Mark",         t:"NT",cat:"Gospels",       p:"MARK"},
+  {name:"Luke",         t:"NT",cat:"Gospels",       p:"LOOK"},
+  {name:"John",         t:"NT",cat:"Gospels",       p:"JON"},
+  {name:"Acts",         t:"NT",cat:"History",       p:"AKTS"},
+  {name:"Romans",       t:"NT",cat:"Epistles",      p:"ROH-munz"},
+  {name:"1 Corinthians",t:"NT",cat:"Epistles",      p:"kuh-RIN-thee-unz"},
+  {name:"2 Corinthians",t:"NT",cat:"Epistles",      p:"kuh-RIN-thee-unz"},
+  {name:"Galatians",    t:"NT",cat:"Epistles",      p:"guh-LAY-shunz"},
+  {name:"Ephesians",    t:"NT",cat:"Epistles",      p:"ih-FEE-zhunz"},
+  {name:"Philippians",  t:"NT",cat:"Epistles",      p:"fih-LIP-ee-unz"},
+  {name:"Colossians",   t:"NT",cat:"Epistles",      p:"kuh-LOSH-unz"},
+  {name:"1 Thessalonians",t:"NT",cat:"Epistles",    p:"thes-uh-LOH-nee-unz"},
+  {name:"2 Thessalonians",t:"NT",cat:"Epistles",    p:"thes-uh-LOH-nee-unz"},
+  {name:"1 Timothy",    t:"NT",cat:"Epistles",      p:"TIM-uh-thee"},
+  {name:"2 Timothy",    t:"NT",cat:"Epistles",      p:"TIM-uh-thee"},
+  {name:"Titus",        t:"NT",cat:"Epistles",      p:"TY-tus"},
+  {name:"Philemon",     t:"NT",cat:"Epistles",      p:"fih-LEE-mun"},
+  {name:"Hebrews",      t:"NT",cat:"Epistles",      p:"HEE-brooz"},
+  {name:"James",        t:"NT",cat:"General Epistles",p:"JAYMZ"},
+  {name:"1 Peter",      t:"NT",cat:"General Epistles",p:"PEE-ter"},
+  {name:"2 Peter",      t:"NT",cat:"General Epistles",p:"PEE-ter"},
+  {name:"1 John",       t:"NT",cat:"General Epistles",p:"JON"},
+  {name:"2 John",       t:"NT",cat:"General Epistles",p:"JON"},
+  {name:"3 John",       t:"NT",cat:"General Epistles",p:"JON"},
+  {name:"Jude",         t:"NT",cat:"General Epistles",p:"JOOD"},
+  {name:"Revelation",   t:"NT",cat:"Prophecy",     p:"rev-uh-LAY-shun"},
+];
+
+const FACTS={
+  "Genesis":"Genesis means 'beginning' — it covers the first ~2,500 years of human history!",
+  "Exodus":"Exodus means 'departure'. It tells the dramatic story of the Israelites leaving Egypt.",
+  "Leviticus":"Named after the tribe of Levi, who served as priests in ancient Israel.",
+  "Numbers":"Gets its name from two censuses taken of the Israelite people.",
+  "Deuteronomy":"Means 'second law' — Moses retells God's laws before the people enter Canaan.",
+  "Joshua":"Joshua led the Israelites into the Promised Land after 40 years in the desert!",
+  "Judges":"Covers 350 years of Israelite history featuring 12 different judges.",
+  "Ruth":"One of only two books named after a woman. Ruth was King David's great-grandmother!",
+  "1 Samuel":"Samuel anointed both Saul and David as kings of Israel.",
+  "2 Samuel":"David wrote most of the Psalms during the events described in 2 Samuel.",
+  "1 Kings":"Solomon's temple took 7 years and 180,000 workers to complete — remarkable!",
+  "2 Kings":"The Northern Kingdom fell to Assyria, and Judah to Babylon in this book.",
+  "1 Chronicles":"Chronicles was likely written by Ezra the scribe as a spiritual history of Israel.",
+  "2 Chronicles":"Ends with Cyrus of Persia giving the Jews permission to return home.",
+  "Ezra":"Ezra led nearly 2,000 Israelites back to Jerusalem from Babylon.",
+  "Nehemiah":"Nehemiah rebuilt Jerusalem's walls in just 52 days — an ancient construction miracle!",
+  "Esther":"Esther never directly mentions God, yet His hand is clearly seen throughout.",
+  "Job":"Thought to be one of the oldest written books in the entire Bible.",
+  "Psalms":"The longest book in the Bible with 150 songs and poems.",
+  "Proverbs":"Contains over 900 wise sayings, mostly from King Solomon.",
+  "Ecclesiastes":"Means 'the preacher' — Solomon reflects on the meaning of life.",
+  "Song of Solomon":"A beautiful poem celebrating love and marriage.",
+  "Isaiah":"Often called the 'fifth Gospel' because of his many prophecies about Jesus.",
+  "Jeremiah":"Known as the 'weeping prophet' because of his sorrow over Israel's sin.",
+  "Lamentations":"Jeremiah wrote this mournful poem about the destruction of Jerusalem.",
+  "Ezekiel":"Had remarkable visions of God's glory, including the famous 'wheels within wheels'.",
+  "Daniel":"Survived the lions' den at over 80 years old — faith never gets old!",
+  "Hosea":"His marriage became a living illustration of God's faithful love for Israel.",
+  "Joel":"Prophesied about Pentecost hundreds of years before it happened (Joel 2:28).",
+  "Amos":"Was a shepherd and farmer before God called him to be a prophet.",
+  "Obadiah":"The shortest book in the Old Testament — just 21 verses!",
+  "Jonah":"Was swallowed by a great fish and emerged three days later — sound familiar?",
+  "Micah":"Predicted the exact birthplace of Jesus — Bethlehem — 700 years early!",
+  "Nahum":"Means 'comfort' and foretold the dramatic fall of the mighty city of Nineveh.",
+  "Habakkuk":"Asked God the hard questions — and God answered! It's okay to wrestle with faith.",
+  "Zephaniah":"Was a great-great-grandson of King Hezekiah.",
+  "Haggai":"His 4-month ministry led directly to the rebuilding of the temple!",
+  "Zechariah":"Has more messianic prophecies than any other minor prophet.",
+  "Malachi":"The last OT book — 400 years of silence followed before John the Baptist!",
+  "Matthew":"Matthew was a tax collector before Jesus called him to be his disciple.",
+  "Mark":"The shortest Gospel and believed to be the first written — very action-packed!",
+  "Luke":"Luke was a doctor and wrote the most comprehensive of the four Gospels.",
+  "John":"John wrote to prove that Jesus is the Son of God (John 20:31).",
+  "Acts":"Covers the first 30 years of the early church — pure history and adventure!",
+  "Romans":"Often called 'the cathedral of Christian faith' — Paul's theological masterpiece.",
+  "1 Corinthians":"Contains 1 Corinthians 13 — one of the most famous passages on love ever written.",
+  "2 Corinthians":"Paul describes his many hardships for the faith in this deeply personal letter.",
+  "Galatians":"Sometimes called the 'Magna Carta' of Christian freedom.",
+  "Ephesians":"Contains the famous 'Armour of God' passage in chapter 6.",
+  "Philippians":"Home of Philippians 4:13 — 'I can do all things through Christ who strengthens me.'",
+  "Colossians":"Gives the highest description of Jesus found in all the Epistles.",
+  "1 Thessalonians":"Contains some of the earliest Christian writing ever found.",
+  "2 Thessalonians":"Paul corrects misunderstandings about the end times in this short letter.",
+  "1 Timothy":"Paul called Timothy his 'true son in the faith' — a beautiful mentorship.",
+  "2 Timothy":"Likely Paul's very last letter, written shortly before his execution.",
+  "Titus":"Titus was left in Crete to organise the churches there — a big responsibility!",
+  "Philemon":"About a runaway slave — and one of the shortest letters in the New Testament.",
+  "Hebrews":"Shows how Jesus fulfils every Old Testament promise, type, and symbol.",
+  "James":"Emphasises that genuine faith always shows itself through actions.",
+  "1 Peter":"Written to encourage believers who were suffering for their faith.",
+  "2 Peter":"Peter warns about false teachers in his final letter before his death.",
+  "1 John":"Uses the word 'love' 46 times — truly the book of love!",
+  "2 John":"Just 13 verses long, written to a 'chosen lady'.",
+  "3 John":"The shortest book in the New Testament — just 15 verses!",
+  "Jude":"Likely the brother of Jesus, who only believed after the resurrection.",
+  "Revelation":"Means 'unveiling' — it's the glorious grand finale of the entire Bible! 🎉",
+};
+
+const WIN_VERSES=[
+  {t:"I can do all things through Christ who strengthens me.",r:"Philippians 4:13"},
+  {t:"Your word is a lamp to my feet and a light to my path.",r:"Psalm 119:105"},
+  {t:"The Lord your God is with you, the Mighty Warrior who saves.",r:"Zephaniah 3:17"},
+  {t:"Be strong and courageous. Do not be afraid, for the Lord your God will be with you wherever you go.",r:"Joshua 1:9"},
+  {t:"Trust in the Lord with all your heart and lean not on your own understanding.",r:"Proverbs 3:5"},
+  {t:"For I know the plans I have for you — plans to prosper you and not to harm you.",r:"Jeremiah 29:11"},
+  {t:"The fear of the Lord is the beginning of wisdom.",r:"Proverbs 9:10"},
+  {t:"Well done, good and faithful servant!",r:"Matthew 25:21"},
+  {t:"All Scripture is God-breathed and useful for teaching, rebuking, correcting and training in righteousness.",r:"2 Timothy 3:16"},
+  {t:"Blessed is the one who reads aloud the words of this prophecy.",r:"Revelation 1:3"},
+];
+
+const MSGS=[
+  ["🎉","Fantastic!","Keep going!"],["⭐","Brilliant!","You're on fire!"],
+  ["🙌","Amazing!","God's Word in your heart!"],["✨","Wonderful!","One more down!"],
+  ["🌟","Superstar!","You're doing great!"],["🎊","Excellent!","Almost there!"],
+  ["🔥","On fire!","Keep that streak!"],["💫","Outstanding!","Angels are cheering!"],
+  ["🕊️","Beautiful!","Wisdom growing!"],["📖","Word Warrior!","Keep reading!"],
+];
+
+const MILESTONES=[
+  {at:5,  e:"🌱",l:"First Steps",   s:"5 books answered!"},
+  {at:10, e:"🕊️",l:"Dove Badge",    s:"10 books — well done!"},
+  {at:20, e:"📜",l:"Scribe",        s:"20 books completed!"},
+  {at:39, e:"⛵",l:"Noah's Ark",    s:"🎉 Old Testament complete!"},
+  {at:50, e:"✝️",l:"Gospel Keeper", s:"50 books! Almost there!"},
+  {at:60, e:"🌊",l:"Sea of Faith",  s:"60 books! Incredible!"},
+  {at:66, e:"👑",l:"Bible Champion",s:"All 66 books! Glory! 🎊"},
+];
+
+const BADGE_DEFS=[
+  {id:"b5",  e:"🌱",l:"First Steps",   c:"Answer 5 books"},
+  {id:"b10", e:"🕊️",l:"Dove Badge",    c:"Answer 10 books"},
+  {id:"b20", e:"📜",l:"Scribe",        c:"Answer 20 books"},
+  {id:"b39", e:"⛵",l:"Noah's Ark",    c:"Complete Old Testament"},
+  {id:"b50", e:"✝️",l:"Gospel Keeper", c:"Answer 50 books"},
+  {id:"b60", e:"🌊",l:"Sea of Faith",  c:"Answer 60 books"},
+  {id:"b66", e:"👑",l:"Bible Champion",c:"Complete all 66 books"},
+  {id:"s5",  e:"🔥",l:"5 Streak",      c:"5 correct in a row"},
+  {id:"s10", e:"💥",l:"10 Streak",     c:"10 correct in a row"},
+  {id:"fast",e:"⚡",l:"Speed Demon",   c:"Complete Hard in <8 min"},
+  {id:"nh",  e:"🧠",l:"No Hints",      c:"Finish Easy with no hints"},
+];
+
+// ════════════════════════════════════
+// STATE
+// ════════════════════════════════════
+let G={
+  username:'',diff:'intermediate',
+  idx:0,score:0,streak:0,maxStreak:0,
+  startTime:null,elapsed:0,
+  eTimer:null,hTimer:null,hLeft:10,
+  hintsUsed:0,totalHints:0,revealed:[],
+  mcqDone:false,waiting:false,
+  missedBooks:[],
+};
+
+// ════════════════════════════════════
+// STORAGE  (localStorage with fallback object)
+// ════════════════════════════════════
+const SK='bq_v2';
+let _mem=null; // in-memory fallback
+
+function loadD(){
+  // try localStorage first
+  try{
+    const r=localStorage.getItem(SK);
+    if(r)return JSON.parse(r);
+  }catch(e){}
+  // fallback to in-memory
+  if(!_mem)_mem=defD();
+  return JSON.parse(JSON.stringify(_mem));
+}
+function saveD(d){
+  try{localStorage.setItem(SK,JSON.stringify(d));return;}catch(e){}
+  // fallback
+  _mem=JSON.parse(JSON.stringify(d));
+}
+function defD(){return{lb:{easy:[],intermediate:[],hard:[]},pb:{easy:{s:0,t:null},intermediate:{s:0,t:null},hard:{s:0,t:null}},missed:[],badges:[],prog:null};}
+
+// ════════════════════════════════════
+// SCREENS
+// ════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goLB(){
+  showScreen('screen-leaderboard');
+  document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('lbE').classList.add('active');
+  renderLB('easy');
+}
+
+// ════════════════════════════════════
+// SOUND
+// ════════════════════════════════════
+let _ac=null;
+function ac(){if(!_ac)_ac=new(window.AudioContext||window.webkitAudioContext)();return _ac;}
+function tn(f,tp='sine',d=.15,v=.16){
+  try{const c=ac(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type=tp;o.frequency.value=f;
+  g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);
+  o.start();o.stop(c.currentTime+d);}catch(e){}
+}
+function sOk(){tn(523,'sine',.1);setTimeout(()=>tn(659,'sine',.1),105);setTimeout(()=>tn(784,'sine',.2),210);}
+function sBad(){tn(200,'sawtooth',.3,.12);setTimeout(()=>tn(160,'sawtooth',.3,.12),220);}
+function sTick(){tn(880,'square',.05,.05);}
+function sWin(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tn(f,'sine',.25,.17),i*110));}
+function sMilestone(){tn(660,'sine',.12);setTimeout(()=>tn(880,'sine',.12),135);setTimeout(()=>tn(1100,'sine',.2),270);}
+
+// ════════════════════════════════════
+// DIFFICULTY SELECT
+// ════════════════════════════════════
+function selDiff(el){
+  document.querySelectorAll('.diff-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  G.diff=el.dataset.diff;
+}
+
+// ════════════════════════════════════
+// START
+// ════════════════════════════════════
+function startGame(){
+  const ni=document.getElementById('usernameInput');
+  const name=(ni?ni.value.trim():G.username);
+  if(!name){if(ni){ni.focus();ni.style.borderColor='var(--wrong)';}return;}
+  stopTimers();
+  G.username=name;
+  G.diff=document.querySelector('.diff-card.selected')?.dataset.diff||'intermediate';
+  G.idx=0;G.score=0;G.streak=0;G.maxStreak=0;
+  G.elapsed=0;G.hintsUsed=0;G.totalHints=0;
+  G.revealed=[];G.missedBooks=[];G.waiting=false;
+  G.startTime=Date.now();
+  clearProg();
+  startET();
+  showScreen('screen-game');
+  updateHdr();
+  renderQ();
+}
+
+// ════════════════════════════════════
+// TIMERS
+// ════════════════════════════════════
+function stopTimers(){clearInterval(G.eTimer);clearInterval(G.hTimer);G.eTimer=null;G.hTimer=null;}
+function startET(){
+  clearInterval(G.eTimer);
+  G.eTimer=setInterval(()=>{
+    G.elapsed=Math.floor((Date.now()-G.startTime)/1000);
+    document.getElementById('timerDisp').textContent='⏱ '+ft(G.elapsed);
+  },1000);
+}
+function ft(s){const m=Math.floor(s/60),sc=s%60;return m+':'+(sc<10?'0':'')+sc;}
+function startHT(){
+  clearInterval(G.hTimer);
+  G.hLeft=10;updTBar(10,10);
+  G.hTimer=setInterval(()=>{
+    G.hLeft--;updTBar(G.hLeft,10);
+    if(G.hLeft<=3)sTick();
+    if(G.hLeft<=0){clearInterval(G.hTimer);onTimeout();}
+  },1000);
+}
+function updTBar(l,tot){
+  const f=document.getElementById('tbarFill');
+  f.style.width=((l/tot)*100)+'%';
+  f.className='tbar-fill'+(l<=3?' danger':'');
+  const td=document.getElementById('timerDisp');
+  td.textContent='⚡ '+l+'s';
+  td.className='spill'+(l<=3?' td':'');
+}
+
+// ════════════════════════════════════
+// RENDER QUESTION
+// ════════════════════════════════════
+function renderQ(){
+  document.getElementById('msPopup').style.display='none';
+  const b=BOOKS[G.idx];
+  const tb=document.getElementById('tBadge');
+  tb.textContent=b.t==='OT'?'📜 Old Testament':'✝️ New Testament';
+  tb.className='t-badge '+(b.t==='OT'?'ot':'nt');
+  document.getElementById('catBadge').textContent=b.cat;
+  document.getElementById('bookNum').textContent=`Book ${G.idx+1} of 66`;
+  document.getElementById('progFill').style.width=((G.idx/66)*100)+'%';
+  document.getElementById('progDisp').textContent=`📖 ${G.idx+1}/66`;
+  const sd=document.getElementById('streakDisp');
+  if(G.streak>=3){
+    sd.style.display='block';
+    document.getElementById('streakFlames').textContent='🔥'.repeat(Math.min(G.streak,6));
+    document.getElementById('streakLbl').textContent=`${G.streak} streak!`;
+  }else sd.style.display='none';
+  document.getElementById('pronunBox').style.display='none';
+  document.getElementById('factBox').style.display='none';
+  G.waiting=false;
+  if(G.diff==='easy') renderMCQ(b);
+  else renderTyping(b);
+  if(G.diff==='hard'){document.getElementById('tbarWrap').style.display='block';startHT();}
+  else document.getElementById('tbarWrap').style.display='none';
+}
+
+function renderTyping(b){
+  document.getElementById('typingSec').style.display='block';
+  document.getElementById('mcqSec').style.display='none';
+  const c=document.getElementById('blanksWrap');c.innerHTML='';
+  [...b.name].forEach(ch=>{
+    const el=document.createElement('div');
+    el.className=ch===' '?'bl sp':'bl';
+    if(ch!==' ')el.dataset.ch=ch.toUpperCase();
+    c.appendChild(el);
+  });
+  const inp=document.getElementById('ansInp');
+  inp.value='';inp.className='input-field';
+  inp.oninput=updBlanks;
+  inp.onkeydown=e=>{if(e.key==='Enter')checkAnswer();};
+  setTimeout(()=>inp.focus(),80);
+}
+
+function updBlanks(){
+  const v=document.getElementById('ansInp').value.toUpperCase();
+  const bls=document.querySelectorAll('#blanksWrap .bl:not(.sp)');
+  const chars=v.replace(/ /g,'').split('');
+  bls.forEach((b,i)=>{b.textContent=chars[i]||'';b.className=chars[i]?'bl filled':'bl';});
+}
+
+function renderMCQ(b){
+  document.getElementById('typingSec').style.display='none';
+  document.getElementById('mcqSec').style.display='block';
+  const c=document.getElementById('mcqBlanksWrap');c.innerHTML='';
+  [...b.name].forEach(ch=>{
+    const el=document.createElement('div');
+    el.className=ch===' '?'bl sp':'bl';
+    if(ch!==' ')el.dataset.ch=ch.toUpperCase();
+    c.appendChild(el);
+  });
+  G.revealed=[];G.hintsUsed=0;G.mcqDone=false;
+  const wrong=[];
+  while(wrong.length<3){const r=Math.floor(Math.random()*BOOKS.length);const n=BOOKS[r].name;if(n!==b.name&&!wrong.includes(n))wrong.push(n);}
+  const opts=shuffle([b.name,...wrong]);
+  const grid=document.getElementById('mcqGrid');grid.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='mcq-opt';btn.textContent=opt;
+    btn.onclick=()=>checkMCQ(opt,btn,b.name);
+    grid.appendChild(btn);
+  });
+  const hb=document.getElementById('hintBtn');hb.disabled=false;hb.style.opacity='1';
+  document.getElementById('hintsLeft').textContent='3 hints left';
+}
+
+function shuffle(a){return a.sort(()=>Math.random()-.5);}
+
+// ════════════════════════════════════
+// CHECK
+// ════════════════════════════════════
+function checkAnswer(){
+  if(G.waiting)return;
+  const b=BOOKS[G.idx];
+  const v=document.getElementById('ansInp').value.trim().toLowerCase();
+  if(v===b.name.toLowerCase())onCorrect();
+  else if(v!==''){
+    const inp=document.getElementById('ansInp');
+    inp.classList.add('wi');setTimeout(()=>inp.classList.remove('wi'),500);
+    onWrong();
+  }
+}
+
+function checkMCQ(chosen,btn,correct){
+  if(G.mcqDone)return;
+  G.mcqDone=true;
+  document.querySelectorAll('.mcq-opt').forEach(b=>b.disabled=true);
+  if(chosen===correct){btn.classList.add('co');onCorrect(true);}
+  else{
+    btn.classList.add('wo');
+    document.querySelectorAll('.mcq-opt').forEach(b=>{if(b.textContent===correct)b.classList.add('co');});
+    setTimeout(()=>onWrong(),950);
+  }
+}
+
+function onCorrect(isMCQ=false){
+  if(G.diff==='hard')clearInterval(G.hTimer);
+  G.waiting=true;
+  sOk();
+  let pts=10;
+  if(G.diff==='hard')pts+=Math.max(0,G.hLeft)*3;
+  if(G.diff==='easy'&&G.hintsUsed===0)pts+=3;
+  const mult=G.diff==='easy'?1:G.diff==='intermediate'?1.5:2.5;
+  const sb=Math.floor(G.streak/3);
+  pts=Math.round((pts+sb)*mult);
+  G.score+=pts;G.streak++;G.hintsUsed=0;
+  if(G.streak>G.maxStreak)G.maxStreak=G.streak;
+  updateHdr();saveProg();
+  // fill blanks
+  document.querySelectorAll('#blanksWrap .bl:not(.sp),#mcqBlanksWrap .bl:not(.sp)').forEach(b=>{b.textContent=b.dataset.ch||'';b.className='bl cf';});
+  // pronun + fact
+  const book=BOOKS[G.idx];
+  document.getElementById('pronunBox').style.display='block';
+  document.getElementById('pronunBox').textContent='🔊 '+book.p;
+  const fact=FACTS[book.name]||'';
+  if(fact){document.getElementById('factBox').style.display='block';document.getElementById('factBox').innerHTML=`<strong>📖 Did you know?</strong> ${fact}`;}
+  // flash
+  const msg=MSGS[Math.floor(Math.random()*MSGS.length)];
+  showFlash(msg[0],msg[1],`+${pts} pts · ${msg[2]}`,fact);
+  // milestones & badges
+  checkMilestone(G.idx+1);
+  if(G.streak===5)unlockBadge('s5');
+  if(G.streak===10)unlockBadge('s10');
+  // longer delay so player can read the Did You Know fact
+  const hasFact=!!(FACTS[book.name]);
+  const delay=hasFact?(isMCQ?3500:3200):(isMCQ?2000:1700);
+  setTimeout(()=>{hideFlash();G.idx++;if(G.idx>=BOOKS.length)endGame();else renderQ();},delay);
+}
+
+function onWrong(){
+  if(G.diff==='hard')clearInterval(G.hTimer);
+  sBad();
+  G.missedBooks.push(BOOKS[G.idx].name);
+  triggerGO('wrong');
+}
+function onTimeout(){sBad();G.missedBooks.push(BOOKS[G.idx].name);triggerGO('time');}
+
+function triggerGO(reason){
+  stopTimers();clearProg();
+  const book=BOOKS[G.idx];
+  document.getElementById('goEmoji').textContent=reason==='time'?'⏱':'😬';
+  document.getElementById('goTitle').textContent=reason==='time'?"Time's Up!":'Oops!';
+  document.getElementById('goMsg').textContent=reason==='time'?"You ran out of time!":"That wasn't quite right — keep practising!";
+  document.getElementById('goCorrect').textContent=book.name;
+  document.getElementById('goReached').textContent=`You reached book ${G.idx+1} of 66`;
+  document.getElementById('goPronun').style.display='block';
+  document.getElementById('goPronun').textContent='🔊 '+book.p;
+  document.getElementById('goFact').innerHTML=`<strong>📖 Did you know?</strong> ${FACTS[book.name]||''}`;
+  // persist missed
+  const d=loadD();d.missed=mergeMissed(d.missed||[],G.missedBooks);saveD(d);
+  showScreen('screen-gameover');
+}
+
+function doQuit(){
+  stopTimers();clearProg();
+  showScreen('screen-home');
+}
+
+// ════════════════════════════════════
+// HINT
+// ════════════════════════════════════
+function useHint(){
+  const bls=[...document.querySelectorAll('#mcqBlanksWrap .bl:not(.sp)')];
+  const ur=bls.filter(b=>!G.revealed.includes(b));
+  if(!ur.length)return;
+  const pick=ur[Math.floor(Math.random()*ur.length)];
+  pick.textContent=pick.dataset.ch;pick.className='bl hi';
+  G.revealed.push(pick);G.hintsUsed++;G.totalHints++;
+  tn(440,'sine',.1,.1);
+  const left=3-G.hintsUsed;
+  document.getElementById('hintsLeft').textContent=left>0?left+' hints left':'No hints left';
+  if(left<=0){const hb=document.getElementById('hintBtn');hb.disabled=true;hb.style.opacity='.4';}
+}
+
+// ════════════════════════════════════
+// MILESTONE
+// ════════════════════════════════════
+function checkMilestone(count){
+  const m=MILESTONES.find(x=>x.at===count);if(!m)return;
+  sMilestone();
+  unlockBadge('b'+count);
+  document.getElementById('msEmoji').textContent=m.e;
+  document.getElementById('msText').textContent=m.l+' Unlocked!';
+  document.getElementById('msSub').textContent=m.s;
+  const p=document.getElementById('msPopup');p.style.display='block';
+  setTimeout(()=>p.style.display='none',4500);
+}
+
+// ════════════════════════════════════
+// BADGES
+// ════════════════════════════════════
+function unlockBadge(id){
+  const d=loadD();
+  if(!d.badges.includes(id)){d.badges.push(id);saveD(d);}
+}
+
+// ════════════════════════════════════
+// END GAME
+// ════════════════════════════════════
+function endGame(){
+  stopTimers();
+  const elapsed=Math.floor((Date.now()-G.startTime)/1000);
+  sWin();spawnConfetti();
+  if(G.diff==='easy'&&G.totalHints===0)unlockBadge('nh');
+  if(G.diff==='hard'&&elapsed<480)unlockBadge('fast');
+  unlockBadge('b66');
+  const d=loadD();
+  const diff=G.diff;
+  const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString()};
+  if(!d.lb[diff])d.lb[diff]=[];
+  d.lb[diff].push(entry);
+  d.lb[diff].sort((a,b)=>b.score-a.score);
+  d.lb[diff]=d.lb[diff].slice(0,20);
+  let newPB=false;
+  if(!d.pb[diff])d.pb[diff]={s:0,t:null};
+  if(G.score>d.pb[diff].s){d.pb[diff].s=G.score;newPB=true;}
+  if(d.pb[diff].t===null||elapsed<d.pb[diff].t)d.pb[diff].t=elapsed;
+  d.missed=mergeMissed(d.missed||[],G.missedBooks);
+  saveD(d);clearProg();
+  // win screen
+  const verse=WIN_VERSES[Math.floor(Math.random()*WIN_VERSES.length)];
+  document.getElementById('winVerse').innerHTML=`"${verse.t}"<cite>— ${verse.r}</cite>`;
+  document.getElementById('winStats').innerHTML=`
+    <div class="win-stat"><div class="wsv">${G.score.toLocaleString()}</div><div class="wsl">⭐ Score</div></div>
+    <div class="win-stat"><div class="wsv">${ft(elapsed)}</div><div class="wsl">⏱ Time</div></div>
+    <div class="win-stat"><div class="wsv">${G.maxStreak}🔥</div><div class="wsl">Best Streak</div></div>
+  `;
+  document.getElementById('pbBanner').style.display=newPB?'block':'none';
+  showScreen('screen-win');
+}
+
+function mergeMissed(existing,newOnes){
+  const map={};
+  existing.forEach(m=>map[m.name]={name:m.name,count:m.count||1,t:m.t});
+  newOnes.forEach(name=>{
+    const book=BOOKS.find(b=>b.name===name);
+    if(map[name])map[name].count++;
+    else map[name]={name,count:1,t:book?book.t:'OT'};
+  });
+  return Object.values(map).sort((a,b)=>b.count-a.count);
+}
+
+// ════════════════════════════════════
+// FLASH
+// ════════════════════════════════════
+function showFlash(e,t,s,f){
+  document.getElementById('fEmoji').textContent=e;
+  document.getElementById('fText').textContent=t;
+  document.getElementById('fSub').textContent=s;
+  document.getElementById('fFact').textContent=f||'';
+  document.getElementById('flashOverlay').classList.add('show');
+}
+function hideFlash(){document.getElementById('flashOverlay').classList.remove('show');}
+
+// ════════════════════════════════════
+// CONFETTI
+// ════════════════════════════════════
+function spawnConfetti(){
+  const cols=['#F4C430','#6BCB77','#A8D8EA','#F4A7B9','#B5C99A','#FF6B6B','#fff'];
+  for(let i=0;i<90;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');c.className='confetti-piece';
+      c.style.cssText=`left:${Math.random()*100}vw;background:${cols[~~(Math.random()*cols.length)]};width:${Math.random()*10+5}px;height:${Math.random()*10+5}px;animation-duration:${Math.random()*2+1.5}s;animation-delay:${Math.random()*.8}s;`;
+      document.body.appendChild(c);setTimeout(()=>c.remove(),4500);
+    },i*22);
+  }
+}
+
+// ════════════════════════════════════
+// HEADER
+// ════════════════════════════════════
+function updateHdr(){
+  document.getElementById('scoreDisp').textContent='⭐ '+G.score.toLocaleString();
+  document.getElementById('hName').textContent=G.username;
+  document.getElementById('hAvatar').textContent=(G.username||'?')[0].toUpperCase();
+}
+
+// ════════════════════════════════════
+// LEADERBOARD
+// ════════════════════════════════════
+let lbDiff='easy';
+function showLbTab(diff,el){
+  lbDiff=diff;
+  document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderLB(diff);
+}
+function renderLB(diff){
+  const d=loadD();
+  const entries=(d.lb&&d.lb[diff])||[];
+  const list=document.getElementById('lbList');
+  if(!entries.length){list.innerHTML='<div class="tc small" style="padding:22px;color:var(--sand)">No scores yet — be the first! 🌟</div>';return;}
+  const medals=['🥇','🥈','🥉'];
+  list.innerHTML=entries.map((e,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank">${medals[i]||'#'+(i+1)}</div>
+      <div style="flex:1">
+        <div class="lb-name">${esc(e.username)}</div>
+        <div class="lb-time">⏱ ${ft(e.time)} · 🔥${e.maxStreak||0} · ${e.date||''}</div>
+      </div>
+      <div class="lb-score">${e.score.toLocaleString()} pts</div>
+    </div>
+  `).join('');
+}
+function esc(s){return(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+
+// ════════════════════════════════════
+// PROFILE
+// ════════════════════════════════════
+function renderProfile(){
+  const d=loadD();
+  const diffs=['easy','intermediate','hard'];
+  const dl={'easy':'🌱 Easy','intermediate':'📝 Medium','hard':'⚡ Hard'};
+  document.getElementById('pbScores').innerHTML=diffs.map(df=>`
+    <div class="pb-cell"><div class="pbv">${d.pb&&d.pb[df]&&d.pb[df].s?d.pb[df].s.toLocaleString():'–'}</div><div class="pbl">${dl[df]}</div></div>
+  `).join('');
+  document.getElementById('pbTimes').innerHTML=diffs.map(df=>`
+    <div class="pb-cell"><div class="pbv">${d.pb&&d.pb[df]&&d.pb[df].t!==null?ft(d.pb[df].t):'–'}</div><div class="pbl">${dl[df]}</div></div>
+  `).join('');
+  const earned=d.badges||[];
+  document.getElementById('badgesGrid').innerHTML=BADGE_DEFS.map(b=>`
+    <div class="badge-item${earned.includes(b.id)?' earned':''}">
+      <span class="badge-emoji">${b.e}</span>
+      <span class="badge-label">${b.l}</span>
+      <span class="badge-cond">${b.c}</span>
+    </div>
+  `).join('');
+  const missed=d.missed||[];
+  const rl=document.getElementById('reviewList');
+  if(!missed.length){rl.innerHTML='<div class="tc small" style="padding:18px;color:var(--sand)">No mistakes yet — great work! 🎉</div>';return;}
+  rl.innerHTML=missed.map(m=>{
+    const book=BOOKS.find(b=>b.name===m.name);
+    return `<div class="review-item">
+      <span style="font-size:1.15rem">${book&&book.t==='OT'?'📜':'✝️'}</span>
+      <div style="flex:1">
+        <div style="font-weight:800;color:var(--dark-brown);font-size:.88rem">${esc(m.name)}</div>
+        <div style="font-size:.7rem;color:var(--brown)">${book?book.cat:''} · ${book?book.t:'?'}</div>
+      </div>
+      <span style="font-size:.73rem;font-weight:800;color:var(--wrong)">×${m.count}</span>
+    </div>`;
+  }).join('');
+}
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');document.getElementById(id).classList.add('active');
+  renderProfile();
+}
+function clearReview(){const d=loadD();d.missed=[];saveD(d);renderProfile();}
+
+// ════════════════════════════════════
+// PROGRESS SAVE/LOAD
+// ════════════════════════════════════
+function saveProg(){
+  const d=loadD();
+  d.prog={username:G.username,diff:G.diff,idx:G.idx,score:G.score,streak:G.streak,maxStreak:G.maxStreak,elapsed:G.elapsed,totalHints:G.totalHints};
+  saveD(d);
+}
+function clearProg(){const d=loadD();d.prog=null;saveD(d);}
+
+// ════════════════════════════════════
+// DARK MODE
+// ════════════════════════════════════
+function toggleDark(){
+  const isDark=document.body.classList.toggle('dark');
+  document.getElementById('dmToggle').textContent=isDark?'☀️':'🌙';
+  try{localStorage.setItem('bq_dark',isDark?'1':'0');}catch(e){}
+}
+
+// ════════════════════════════════════
+// INIT
+// ════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  // set default diff
+  const defCard=document.querySelector('[data-diff="intermediate"]');
+  if(defCard)defCard.classList.add('selected');
+  G.diff='intermediate';
+  // check saved progress
+  const d=loadD();
+  if(d.prog&&d.prog.idx>0){
+    const p=d.prog;
+    const resume=confirm(`Welcome back, ${p.username}! 👋\nResume from book ${p.idx+1} — ${BOOKS[p.idx]?.name}?\n\nOK = Resume  |  Cancel = Start Fresh`);
+    if(resume){
+      G.username=p.username;G.diff=p.diff;G.idx=p.idx;G.score=p.score;
+      G.streak=p.streak;G.maxStreak=p.maxStreak;G.elapsed=p.elapsed;G.totalHints=p.totalHints||0;
+      G.startTime=Date.now()-(p.elapsed*1000);
+      document.getElementById('usernameInput').value=p.username;
+      document.querySelectorAll('.diff-card').forEach(c=>{c.classList.remove('selected');if(c.dataset.diff===p.diff)c.classList.add('selected');});
+      G.diff=p.diff;startET();
+      showScreen('screen-game');updateHdr();renderQ();
+    }else clearProg();
+  }
+  document.getElementById('usernameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
+  // dark mode — restore saved preference
+  const saved=localStorage.getItem('bq_dark');
+  if(saved==='1'||(!saved&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+    document.body.classList.add('dark');
+    document.getElementById('dmToggle').textContent='☀️';
+  } else {
+    document.getElementById('dmToggle').textContent='🌙';
+  }
+  // make leaderboard screen trigger profile render too
+  const origShow=showScreen;
+  window.showScreen=function(id){
+    origShow(id);
+    if(id==='screen-profile')renderProfile();
+  };
+});
+</script>
+</body>
+</html>
