@@ -10,13 +10,45 @@
 <meta name="apple-mobile-web-app-title" content="Tango of the Testaments">
 <meta name="description" content="Learn all 66 books of the Bible in order — Old and New Testament. 3 difficulty levels, leaderboard, badges and more!">
 <title>Tango of the Testaments 📖</title>
-<!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID -->
+<!-- Google Analytics — replace with your Measurement ID -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHDWCYXE1H"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-JHDWCYXE1H');
+</script>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, where }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  // ── Firebase config for TestamentTango ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBfDZzlIyrn9p4_e4NXJdyPnibGkzDoeL8",
+    authDomain:        "testamenttango.firebaseapp.com",
+    projectId:         "testamenttango",
+    storageBucket:     "testamenttango.firebasestorage.app",
+    messagingSenderId: "260102572136",
+    appId:             "1:260102572136:web:3bdb10e2557d6524ecd3dd"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // Expose to game logic
+  window._fbDb         = db;
+  window._fbCollection = collection;
+  window._fbAddDoc     = addDoc;
+  window._fbQuery      = query;
+  window._fbOrderBy    = orderBy;
+  window._fbLimit      = limit;
+  window._fbGetDocs    = getDocs;
+  window._fbWhere      = where;
+  window._fbReady      = true;
+  // Dispatch event so renderLB can react
+  window.dispatchEvent(new Event('fbReady'));
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
@@ -1009,20 +1041,16 @@ function triggerGO(reason){
   if(G.idx > 0){
     const elapsed=Math.floor((Date.now()-G.startTime)/1000);
     gaEvent('game_over',{difficulty:G.diff,books_reached:G.idx,score:G.score,reason});
+    const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,
+      difficulty:G.diff,date:new Date().toLocaleDateString(),reached:G.idx,ts:Date.now()};
+    submitScore(entry);
+    // local PB score update
     const d=loadD();
-    const diff=G.diff;
-    const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString(),reached:G.idx};
-    if(!d.lb[diff])d.lb[diff]=[];
-    d.lb[diff].push(entry);
-    d.lb[diff].sort((a,b)=>b.score-a.score);
-    d.lb[diff]=d.lb[diff].slice(0,20);
-    // update PB score
-    if(!d.pb[diff])d.pb[diff]={s:0,t:null};
-    if(G.score>d.pb[diff].s)d.pb[diff].s=G.score;
+    if(!d.pb[G.diff])d.pb[G.diff]={s:0,t:null};
+    if(G.score>d.pb[G.diff].s)d.pb[G.diff].s=G.score;
     d.missed=mergeMissed(d.missed||[],G.missedBooks);
     saveD(d);
   } else {
-    // still save missed books even if failed on book 1
     const d=loadD();
     d.missed=mergeMissed(d.missed||[],G.missedBooks);
     saveD(d);
@@ -1084,20 +1112,17 @@ function endGame(){
   if(G.diff==='easy'&&G.totalHints===0)unlockBadge('nh');
   if(G.diff==='hard'&&elapsed<480)unlockBadge('fast');
   unlockBadge('b66');
+  const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,
+    difficulty:G.diff,date:new Date().toLocaleDateString(),reached:66,ts:Date.now()};
+  submitScore(entry);
+  // local PB only
   const d=loadD();
-  const diff=G.diff;
-  const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString(),reached:66};
-  if(!d.lb[diff])d.lb[diff]=[];
-  d.lb[diff].push(entry);
-  d.lb[diff].sort((a,b)=>b.score-a.score);
-  d.lb[diff]=d.lb[diff].slice(0,20);
   let newPB=false;
-  if(!d.pb[diff])d.pb[diff]={s:0,t:null};
-  if(G.score>d.pb[diff].s){d.pb[diff].s=G.score;newPB=true;}
-  if(d.pb[diff].t===null||elapsed<d.pb[diff].t)d.pb[diff].t=elapsed;
+  if(!d.pb[G.diff])d.pb[G.diff]={s:0,t:null};
+  if(G.score>d.pb[G.diff].s){d.pb[G.diff].s=G.score;newPB=true;}
+  if(d.pb[G.diff].t===null||elapsed<d.pb[G.diff].t)d.pb[G.diff].t=elapsed;
   d.missed=mergeMissed(d.missed||[],G.missedBooks);
   saveD(d);clearProg();
-  // win screen
   const verse=WIN_VERSES[Math.floor(Math.random()*WIN_VERSES.length)];
   document.getElementById('winVerse').innerHTML=`"${verse.t}"<cite>— ${verse.r}</cite>`;
   document.getElementById('winStats').innerHTML=`
@@ -1159,27 +1184,61 @@ function updateHdr(){
 // LEADERBOARD
 // ════════════════════════════════════
 let lbDiff='easy';
+// ════════════════════════════════════
+// FIREBASE LEADERBOARD
+// ════════════════════════════════════
+async function submitScore(entry){
+  if(!window._fbReady){ console.warn('Firebase not ready — score not submitted to global LB'); return; }
+  try{
+    const col = window._fbCollection(window._fbDb, 'scores');
+    await window._fbAddDoc(col, entry);
+  } catch(e){ console.error('Score submit failed:',e); }
+}
+
 function showLbTab(diff,el){
   lbDiff=diff;
   document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');renderLB(diff);
+  el.classList.add('active');
+  renderLB(diff);
 }
-function renderLB(diff){
-  const d=loadD();
-  const entries=(d.lb&&d.lb[diff])||[];
+
+async function renderLB(diff){
   const list=document.getElementById('lbList');
-  if(!entries.length){list.innerHTML='<div class="tc small" style="padding:22px;color:var(--sand)">No scores yet — be the first! 🌟</div>';return;}
-  const medals=['🥇','🥈','🥉'];
-  list.innerHTML=entries.map((e,i)=>`
-    <div class="lb-row">
-      <div class="lb-rank">${medals[i]||'#'+(i+1)}</div>
-      <div style="flex:1">
-        <div class="lb-name">${esc(e.username)}</div>
-        <div class="lb-time">⏱ ${ft(e.time)} · 🔥${e.maxStreak||0} · 📖${e.reached!=null?e.reached:66}/66 · ${e.date||''}</div>
+  list.innerHTML='<div class="tc small" style="padding:22px;color:var(--sand)">Loading scores… ⏳</div>';
+  if(!window._fbReady){
+    list.innerHTML='<div class="tc small" style="padding:22px;color:var(--wrong)">⚠️ Firebase not configured yet.<br>Follow the setup steps to enable the global leaderboard.</div>';
+    return;
+  }
+  try{
+    const col=window._fbCollection(window._fbDb,'scores');
+    const q=window._fbQuery(
+      col,
+      window._fbWhere('difficulty','==',diff),
+      window._fbOrderBy('score','desc'),
+      window._fbLimit(20)
+    );
+    const snap=await window._fbGetDocs(q);
+    const entries=[];
+    snap.forEach(doc=>entries.push(doc.data()));
+    if(!entries.length){
+      list.innerHTML='<div class="tc small" style="padding:22px;color:var(--sand)">No scores yet — be the first! 🌟</div>';
+      return;
+    }
+    const medals=['🥇','🥈','🥉'];
+    list.innerHTML=entries.map((e,i)=>`
+      <div class="lb-row">
+        <div class="lb-rank">${medals[i]||'#'+(i+1)}</div>
+        <div style="flex:1">
+          <div class="lb-name">${esc(e.username)}</div>
+          <div class="lb-time">⏱ ${ft(e.time||0)} · 🔥${e.maxStreak||0} · 📖${e.reached!=null?e.reached:66}/66 · ${e.date||''}</div>
+        </div>
+        <div class="lb-score">${(e.score||0).toLocaleString()} pts</div>
       </div>
-      <div class="lb-score">${e.score.toLocaleString()} pts</div>
-    </div>
-  `).join('');
+    `).join('');
+  } catch(err){
+    console.error('renderLB error:',err);
+    list.innerHTML='<div class="tc small" style="padding:22px;color:var(--wrong)">⚠️ Could not load scores. Check Firebase setup.</div>';
+  }
 }
 function esc(s){return(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
 
