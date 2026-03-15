@@ -658,8 +658,10 @@ function loadD(){
   return JSON.parse(JSON.stringify(_mem));
 }
 function saveD(d){
-  try{localStorage.setItem(SK,JSON.stringify(d));return;}catch(e){}
-  // fallback
+  try{localStorage.setItem(SK,JSON.stringify(d));return;}catch(e){
+    console.warn('localStorage unavailable, using in-memory fallback:',e);
+  }
+  // in-memory fallback
   _mem=JSON.parse(JSON.stringify(d));
 }
 function defD(){return{lb:{easy:[],intermediate:[],hard:[]},pb:{easy:{s:0,t:null},intermediate:{s:0,t:null},hard:{s:0,t:null}},missed:[],badges:[],prog:null};}
@@ -671,9 +673,12 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  if(id==='screen-profile')renderProfile();
 }
 function goLB(){
-  showScreen('screen-leaderboard');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-leaderboard').classList.add('active');
+  window.scrollTo(0,0);
   document.querySelectorAll('.lb-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('lbE').classList.add('active');
   renderLB('easy');
@@ -841,8 +846,14 @@ function shuffle(a){return a.sort(()=>Math.random()-.5);}
 function checkAnswer(){
   if(G.waiting)return;
   const b=BOOKS[G.idx];
-  const v=document.getElementById('ansInp').value.trim().toLowerCase();
-  if(v===b.name.toLowerCase())onCorrect();
+  // Normalise: collapse multiple spaces, trim, lowercase
+  const raw=document.getElementById('ansInp').value;
+  const v=raw.trim().replace(/\s+/g,' ').toLowerCase();
+  const correct=b.name.toLowerCase();
+  // Also accept without the space e.g. "1samuel" = "1 samuel"
+  const correctNoSpace=correct.replace(/\s+/g,'');
+  const vNoSpace=v.replace(/\s+/g,'');
+  if(v===correct||vNoSpace===correctNoSpace)onCorrect();
   else if(v!==''){
     const inp=document.getElementById('ansInp');
     inp.classList.add('wi');setTimeout(()=>inp.classList.remove('wi'),500);
@@ -1160,19 +1171,15 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   document.getElementById('usernameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
   // dark mode — restore saved preference
-  const saved=localStorage.getItem('bq_dark');
-  if(saved==='1'||(!saved&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
-    document.body.classList.add('dark');
-    document.getElementById('dmToggle').textContent='☀️';
-  } else {
-    document.getElementById('dmToggle').textContent='🌙';
-  }
-  // make leaderboard screen trigger profile render too
-  const origShow=showScreen;
-  window.showScreen=function(id){
-    origShow(id);
-    if(id==='screen-profile')renderProfile();
-  };
+  try {
+    const saved=localStorage.getItem('bq_dark');
+    if(saved==='1'||(!saved&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+      document.body.classList.add('dark');
+      document.getElementById('dmToggle').textContent='☀️';
+    } else {
+      document.getElementById('dmToggle').textContent='🌙';
+    }
+  } catch(e){ document.getElementById('dmToggle').textContent='🌙'; }
 });
 </script>
 </body>
