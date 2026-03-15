@@ -2,8 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FDF6EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1025" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tango of the Testaments">
+<meta name="description" content="Learn all 66 books of the Bible in order — Old and New Testament. 3 difficulty levels, leaderboard, badges and more!">
 <title>Tango of the Testaments 📖</title>
+<!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHDWCYXE1H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-JHDWCYXE1H');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -33,6 +47,8 @@
     --divider:#3D2860;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
+  /* Remove 300ms tap delay on mobile */
+  a,button,input,select{touch-action:manipulation;}
   body{font-family:'Nunito',sans-serif;background:var(--cream);min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s;}
   body::before{content:'';position:fixed;inset:0;z-index:0;
     background:radial-gradient(ellipse at 10% 20%,rgba(168,216,234,.35) 0%,transparent 55%),
@@ -52,7 +68,7 @@
   @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
   .logo-title{font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--dark-brown);letter-spacing:1px;line-height:1;text-align:center;transition:color .4s;}
   .logo-sub{font-size:.95rem;color:var(--brown);margin-top:4px;font-weight:600;text-align:center;}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;border:none;cursor:pointer;border-radius:50px;padding:13px 26px;transition:all .18s;outline:none;box-shadow:0 4px 0 rgba(0,0,0,.15);}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;border:none;cursor:pointer;border-radius:50px;padding:13px 26px;transition:all .18s;outline:none;box-shadow:0 4px 0 rgba(0,0,0,.15);-webkit-tap-highlight-color:transparent;min-height:48px;}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15);}
   .btn-primary{background:var(--gold);color:var(--dark-brown);}
   .btn-primary:hover{background:var(--gold-dark);transform:translateY(-2px);}
@@ -187,15 +203,77 @@
   body.dark .tab.active{color:#fff;}
   .tab-content{display:none;} .tab-content.active{display:block;}
   /* ── DARK MODE TOGGLE ── */
-  .dm-toggle{position:fixed;top:14px;right:16px;z-index:500;background:var(--card-bg);border:2px solid var(--input-border);border-radius:50px;padding:6px 12px;font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .3s;line-height:1;}
+  .dm-toggle{position:fixed;top:14px;right:16px;z-index:500;background:var(--card-bg);border:2px solid var(--input-border);border-radius:50px;padding:6px 12px;font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .3s;line-height:1;-webkit-tap-highlight-color:transparent;}
   .dm-toggle:hover{transform:scale(1.1);}
-  @media(max-width:480px){
+
+  /* ── MOBILE: base touch targets & font scaling ── */
+  @media(max-width:600px){
+    /* Prevent iOS font size inflate */
+    html{-webkit-text-size-adjust:100%;}
+    /* All buttons need min 44px height for easy tapping */
+    .btn{min-height:48px;font-size:.95rem;}
+    .btn-lg{min-height:54px;font-size:1.1rem;}
+    /* Cards full-width with comfortable padding */
+    .card{padding:18px 14px;border-radius:18px;}
+    /* Logo shrinks gracefully */
+    .logo-title{font-size:1.9rem;}
+    .logo-icon{font-size:2.8rem;}
+    /* Difficulty grid stacks on very small screens */
+    .diff-grid{grid-template-columns:1fr 1fr 1fr;gap:8px;}
+    .diff-card{padding:12px 6px;}
+    .diff-card .de{font-size:1.6rem;}
+    .diff-card .dn{font-size:.8rem;}
+    .diff-card .dd{font-size:.65rem;}
+    /* Game header wraps neatly */
+    .ghdr{gap:5px;}
+    .spill{padding:6px 10px;font-size:.78rem;}
+    /* Blanks scale down */
+    .bl{width:26px;height:34px;font-size:.95rem;border-radius:8px;}
+    /* MCQ options: full width on mobile for easy tapping */
+    .mcq-grid{grid-template-columns:1fr;gap:8px;}
+    .mcq-opt{min-height:52px;font-size:1rem;padding:14px 12px;}
+    /* Input field larger for thumb typing */
+    .input-field{font-size:1rem;padding:14px 16px;}
+    /* Win/stats grid */
+    .win-stats{grid-template-columns:1fr 1fr 1fr;}
+    .win-stat .wsv{font-size:1.4rem;}
+    /* PB grid */
+    .pb-grid{grid-template-columns:1fr 1fr 1fr;}
+    /* Leaderboard rows */
+    .lb-row{padding:9px 10px;gap:7px;}
+    .lb-name{font-size:.82rem;}
+    .lb-score{font-size:.8rem;}
+    .lb-time{font-size:.68rem;}
+    /* Flash card */
+    .flash-card{padding:20px 18px;}
+    .ft{font-size:1.55rem;}
+    .ff{font-size:.83rem;}
+    /* Milestone popup */
+    .ms-popup{padding:12px 14px;}
+    /* Tabs */
+    .tab{font-size:.74rem;padding:9px 4px;}
+    /* Section titles */
+    .sec-title{font-size:1.25rem;}
+    /* Nav bar back button */
+    .nav-bar .btn{padding:10px 14px;font-size:.85rem;}
+    /* Bottom spacing so content isn't behind mobile nav bars */
+    .screen{padding-bottom:32px;}
+    /* Dark mode toggle — slightly smaller on mobile */
+    .dm-toggle{top:10px;right:10px;padding:5px 10px;font-size:1rem;}
+    /* Scroll lists taller on mobile to avoid excessive scrolling */
+    .scroll-list{max-height:280px;}
+    /* Badges wrap nicely */
+    .badge-item{min-width:60px;padding:8px 6px;}
+    .badge-emoji{font-size:1.5rem;}
+    .badge-label{font-size:.6rem;}
+  }
+  /* Extra small phones */
+  @media(max-width:360px){
+    .logo-title{font-size:1.65rem;}
     .diff-grid{grid-template-columns:1fr;}
-    .mcq-grid{grid-template-columns:1fr;}
-    .win-stats,.pb-grid{grid-template-columns:1fr 1fr;}
-    .logo-title{font-size:2.2rem;}
-    .bl{width:27px;height:35px;font-size:1rem;}
-    .card{padding:20px 14px;}
+    .bl{width:23px;height:30px;font-size:.85rem;}
+    .win-stats{grid-template-columns:1fr 1fr;}
+    .pb-grid{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
@@ -229,7 +307,7 @@
   <div style="height:20px"></div>
   <div class="card su">
     <div class="sec-title tc" style="font-size:1.15rem;margin-bottom:8px">Your Name 😊</div>
-    <input class="input-field" id="usernameInput" type="text" placeholder="Enter your name..." maxlength="20" autocomplete="off">
+    <input class="input-field" id="usernameInput" type="text" placeholder="Enter your name..." maxlength="20" autocomplete="off" autocapitalize="words" style="font-size:16px">
     <div class="divider"></div>
     <div class="sec-title tc" style="font-size:1.15rem;margin-bottom:8px">Difficulty</div>
     <div class="diff-grid">
@@ -312,7 +390,7 @@
     <!-- TYPING -->
     <div id="typingSec">
       <div class="blanks-wrap" id="blanksWrap"></div>
-      <input class="input-field" id="ansInp" type="text" placeholder="Type the book name..." autocomplete="off" autocorrect="off" spellcheck="false" style="margin-top:5px">
+      <input class="input-field" id="ansInp" type="text" placeholder="Type the book name..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" style="margin-top:5px;font-size:16px">
       <div style="display:flex;gap:8px;margin-top:9px">
         <button class="btn btn-sage btn-block" onclick="checkAnswer()">Check ✓</button>
         <button class="btn btn-outline" onclick="doQuit()" style="white-space:nowrap">🚪 Quit</button>
@@ -725,6 +803,7 @@ function startGame(){
   G.revealed=[];G.missedBooks=[];G.waiting=false;
   G.startTime=Date.now();
   clearProg();
+  gaEvent('game_start',{difficulty:G.diff,username:G.username});
   startET();
   showScreen('screen-game');
   updateHdr();
@@ -926,8 +1005,28 @@ function triggerGO(reason){
   document.getElementById('goPronun').style.display='block';
   document.getElementById('goPronun').textContent='🔊 '+book.p;
   document.getElementById('goFact').innerHTML=`<strong>📖 Did you know?</strong> ${FACTS[book.name]||''}`;
-  // persist missed
-  const d=loadD();d.missed=mergeMissed(d.missed||[],G.missedBooks);saveD(d);
+  // Save score to leaderboard even on game over (if at least 1 book answered)
+  if(G.idx > 0){
+    const elapsed=Math.floor((Date.now()-G.startTime)/1000);
+    gaEvent('game_over',{difficulty:G.diff,books_reached:G.idx,score:G.score,reason});
+    const d=loadD();
+    const diff=G.diff;
+    const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString(),reached:G.idx};
+    if(!d.lb[diff])d.lb[diff]=[];
+    d.lb[diff].push(entry);
+    d.lb[diff].sort((a,b)=>b.score-a.score);
+    d.lb[diff]=d.lb[diff].slice(0,20);
+    // update PB score
+    if(!d.pb[diff])d.pb[diff]={s:0,t:null};
+    if(G.score>d.pb[diff].s)d.pb[diff].s=G.score;
+    d.missed=mergeMissed(d.missed||[],G.missedBooks);
+    saveD(d);
+  } else {
+    // still save missed books even if failed on book 1
+    const d=loadD();
+    d.missed=mergeMissed(d.missed||[],G.missedBooks);
+    saveD(d);
+  }
   showScreen('screen-gameover');
 }
 
@@ -981,12 +1080,13 @@ function endGame(){
   stopTimers();
   const elapsed=Math.floor((Date.now()-G.startTime)/1000);
   sWin();spawnConfetti();
+  gaEvent('game_complete',{difficulty:G.diff,score:G.score,time_seconds:elapsed,max_streak:G.maxStreak});
   if(G.diff==='easy'&&G.totalHints===0)unlockBadge('nh');
   if(G.diff==='hard'&&elapsed<480)unlockBadge('fast');
   unlockBadge('b66');
   const d=loadD();
   const diff=G.diff;
-  const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString()};
+  const entry={username:G.username,score:G.score,time:elapsed,maxStreak:G.maxStreak,diff,date:new Date().toLocaleDateString(),reached:66};
   if(!d.lb[diff])d.lb[diff]=[];
   d.lb[diff].push(entry);
   d.lb[diff].sort((a,b)=>b.score-a.score);
@@ -1075,7 +1175,7 @@ function renderLB(diff){
       <div class="lb-rank">${medals[i]||'#'+(i+1)}</div>
       <div style="flex:1">
         <div class="lb-name">${esc(e.username)}</div>
-        <div class="lb-time">⏱ ${ft(e.time)} · 🔥${e.maxStreak||0} · ${e.date||''}</div>
+        <div class="lb-time">⏱ ${ft(e.time)} · 🔥${e.maxStreak||0} · 📖${e.reached!=null?e.reached:66}/66 · ${e.date||''}</div>
       </div>
       <div class="lb-score">${e.score.toLocaleString()} pts</div>
     </div>
@@ -1138,8 +1238,11 @@ function saveProg(){
 function clearProg(){const d=loadD();d.prog=null;saveD(d);}
 
 // ════════════════════════════════════
-// DARK MODE
+// ANALYTICS HELPER
 // ════════════════════════════════════
+function gaEvent(name, params){
+  try{if(typeof gtag!=='undefined')gtag('event',name,params);}catch(e){}
+}
 function toggleDark(){
   const isDark=document.body.classList.toggle('dark');
   document.getElementById('dmToggle').textContent=isDark?'☀️':'🌙';
